@@ -4,6 +4,7 @@ package main
 import (
 	"archive/zip"
 	"flag"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"log"
@@ -33,16 +34,15 @@ func unzip(src, dest string, t transform.Transformer) error {
 	for _, item := range zc.File {
 		fname, err := toUtf8(item.Name, t)
 		if err != nil {
-			return err
+			fname = item.Name
 		}
 		path := filepath.Join(dest, fname)
 		if item.FileInfo().IsDir() {
-			if err := os.MkdirAll(path, item.Mode()); err != nil {
+			if err := os.MkdirAll(path, 0755); err != nil {
 				return err
 			}
 		} else {
-			output, err := os.OpenFile(
-				path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, item.Mode())
+			output, err := os.Create(path)
 			if err != nil {
 				return err
 			}
@@ -62,10 +62,11 @@ func unzip(src, dest string, t transform.Transformer) error {
 }
 
 func main() {
-	output := "./"
-	flag.StringVar(&output, "o", output, "destination folder")
+	dest := "./"
+	flag.StringVar(&dest, "d", dest, "destination folder")
 	flag.Parse()
-	err := unzip(flag.Arg(0), output, japanese.ShiftJIS.NewDecoder())
+	fmt.Println("dest:", dest)
+	err := unzip(flag.Arg(0), dest, japanese.ShiftJIS.NewDecoder())
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -11,5 +11,5 @@ go get github.com/nobonobo/unzip-cp932
 ## usage
 
 ```
-unzip-cp932 FILE.zip -o DST-FOLDER
+unzip-cp932 -d destination FILE.zip
 ```
