@@ -51,7 +51,7 @@ func unzip(src, dest string, t transform.Transformer) error {
 			if err != nil {
 				return err
 			}
-			defer rc.Close()
+			defer fp.Close()
 			if _, err := io.Copy(output, fp); err != nil {
 				return err
 			}
